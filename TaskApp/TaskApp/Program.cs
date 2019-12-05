@@ -1,11 +1,22 @@
 ﻿using System;
+using System.Text;
 using TaskApp.TaskClasses;
+using TaskApp.TaskInheritance;
 
 namespace TaskApp
 {
   class Program
   {
     static void Main(string[] args)
+    {
+      TaskClasses();
+
+      TaskInheritance();
+
+      Console.ReadLine();
+    }
+
+    private static void TaskClasses()
     {
       //1
       var address = new Address
@@ -30,7 +41,7 @@ namespace TaskApp
       var point3 = new Point(3, 1, "(3,1)");
       var point4 = new Point(3, 2, "(3,2)");
       var point5 = new Point(4, -2, "(4,-2)");
-      var figure3 = new Figure(point1, point2, point3); 
+      var figure3 = new Figure(point1, point2, point3);
       Console.WriteLine($"Triangle {figure3} perimeter={figure3.PerimeterCalculator()}");
 
       var figure4 = new Figure(point1, point2, point3, point4);
@@ -73,8 +84,91 @@ namespace TaskApp
       var invoicePriceWithNdc = invoice.CalculatePrice(true);
 
       Console.WriteLine($"Invoice: {invoice}. Price: {invoicePrice.ToString("C")}. Price with NDS: {invoicePriceWithNdc.ToString("C")}");
+    }
 
-      Console.ReadLine();
+    private static void TaskInheritance()
+    {
+      //1
+
+      Printer printer = new LatherPrinter(ConsoleColor.White);
+      printer.Print("LatherPrinter. White");
+      printer.Color = ConsoleColor.DarkYellow;
+      printer.Print("LatherPrinter. DarkYellow");
+
+      printer = new ThreeDPrinter(ConsoleColor.Green);
+      printer.Print("ThreeDPrinter. Green");
+      printer.Color = ConsoleColor.Blue;
+      printer.Print("ThreeDPrinter. Blue");
+
+      //2
+      var classRoom1 = new ClassRoom(new ExcelentPupil(), new GoodPupil());
+      classRoom1.PrintInfoAboutPupils();
+
+      var classRoom2 = new ClassRoom(new ExcelentPupil(), new GoodPupil(), new BadPupil(), new BadPupil());
+      classRoom2.PrintInfoAboutPupils();
+
+      var classRoom3 = new ClassRoom(new ExcelentPupil(), new GoodPupil(), new BadPupil(), new BadPupil(), new ExcelentPupil());
+      classRoom3.PrintInfoAboutPupils();
+
+      //3
+      var vehicles = new Vehicle[]
+      {
+        new Plane
+        {
+          X = 100.44,
+          Y = 3434.34,
+          Height = 2342734,
+          PassengersCount = 39,
+          Price = 79000000,
+          Speed = 12345,
+          YearOfIssue = 2019
+        },
+        new Ship
+        {
+          X = 134.44,
+          Y = 56.34,
+          Port = "Port 1234",
+          PassengersCount = 2897,
+          Price = 12000000,
+          Speed = 567,
+          YearOfIssue = 200
+        },
+        new Саг
+        {
+          X = 23.44,
+          Y = 12,
+          Price = 70000,
+          Speed = 180,
+          YearOfIssue = 1999
+        }
+      };
+
+      foreach (var v in vehicles)
+      {
+        Console.WriteLine(v);
+      }
+
+      //4
+      Console.OutputEncoding = Encoding.UTF8;
+      Console.WriteLine("Введите ключ доступа и нажмите Enter:");
+      var documentWorkerKey = Console.ReadLine();
+
+      var documentWorker = new DocumentWorker();
+      if (!string.IsNullOrEmpty(documentWorkerKey))
+      {
+        if (documentWorkerKey.Equals("pro", StringComparison.OrdinalIgnoreCase))
+        {
+          documentWorker = new ProDocumentWorker();
+        }
+        else if (documentWorkerKey.Equals("exp", StringComparison.OrdinalIgnoreCase))
+        {
+          documentWorker = new ExpertDocumentWorker();
+        }
+      }
+
+      documentWorker.OpenDocument();
+      documentWorker.EditDocument();
+      documentWorker.SaveDocument();
     }
   }
 }
