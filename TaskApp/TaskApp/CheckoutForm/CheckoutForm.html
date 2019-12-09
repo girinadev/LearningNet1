@@ -1,0 +1,102 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <title>Checkout Form</title>
+  <!-- Add icon library -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link href="checkout-form.css" rel="stylesheet" />
+</head>
+<body>
+  <div class="form-container">
+    <form action="">
+      <div class="header">
+        <h2>Checkout form</h2>
+      </div>
+
+      <div class="section">
+        <div class="input-container with-icon col-2">
+          <i class="fa fa-user icon"></i>
+          <i class="splitter"></i>
+          <input class="input-field col-1" name="firstName" type="text" placeholder="First name" required />
+        </div>
+        <div class="input-container with-icon col-2">
+          <i class="fa fa-user icon"></i>
+          <i class="splitter"></i>
+          <input class="input-field col-1" name="lastName" type="text" placeholder="Last name" required />
+        </div>
+        <div class="input-container with-icon col-2">
+          <i class="fa fa-envelope icon"></i>
+          <i class="splitter"></i>
+          <input class="input-field col-1" name="email" type="email" placeholder="E-mail" required />
+        </div>
+        <div class="input-container with-icon col-2">
+          <i class="fa fa-phone icon"></i>
+          <i class="splitter"></i>
+          <input class="input-field col-1" name="phone" type="text" placeholder="Phone" required />
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="input-container country">
+          <select class="input-field col-1" name="country" placeholder="Country" required>
+            <option value="1">Ukraine</option>
+          </select>
+        </div>
+        <div class="input-container city">
+          <input class="input-field col-1" name="city" type="text" placeholder="City" required />
+        </div>
+        <div class="input-container post-code">
+          <input class="input-field col-1" name="postCode" type="text" placeholder="Post code" required />
+        </div>
+        <div class="input-container col-1">
+          <input class="input-field col-1" name="address" type="text" placeholder="Address" required />
+        </div>
+        <div class="input-container col-1">
+          <textarea class="input-field col-1" name="AdditionInfo" placeholder="Addition info" rows="3"></textarea>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="input-container col-1">
+          <input type="radio" name="cardType" value="visa" checked="checked" />
+          <label>Visa</label>
+          <input type="radio" name="cardType" value="masterCard" />
+          <label>MasterCard</label>
+          <input type="radio" name="cardType" value="payPal" />
+          <label>PayPal</label>
+        </div>
+        <div class="input-container col-1">
+          <input class="input-field col-1" name="NameOfCard" type="text" placeholder="Name of card" required />
+        </div>
+
+        <div class="input-container card-number">
+          <input class="input-field col-1" name="cardNumber" type="text" placeholder="Card number" required />
+        </div>
+        <div class="input-container cvv2">
+          <input class="input-field col-1" name="cvv2" type="text" placeholder="CVV2" required />
+        </div>
+
+        <div class="input-container exp">
+          <label>Expiration date</label>
+        </div>
+        <div class="input-container month">
+          <select class="input-field col-1" name="month" placeholder="Moth" required>
+            <option>January</option>
+            <option>February</option>
+          </select>
+        </div>
+        <div class="input-container year">
+          <input class="input-field col-1" name="year" type="text" placeholder="Year" required />
+        </div>
+
+      </div>
+
+      <div class="footer">
+        <input type="submit" value="Continue" />
+      </div>
+    </form>
+  </div>
+</body>
+</html>
