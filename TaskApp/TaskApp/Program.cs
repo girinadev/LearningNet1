@@ -1,6 +1,4 @@
-﻿using System;
-using System.Text;
-using TaskApp.TaskClasses;
+﻿using TaskApp.TaskClasses;
 using TaskApp.TaskInheritance;
 
 namespace TaskApp
@@ -12,6 +10,8 @@ namespace TaskApp
       TaskClasses();
 
       TaskInheritance();
+
+      TaskAbstraction();
 
       Console.ReadLine();
     }
@@ -169,6 +169,13 @@ namespace TaskApp
       documentWorker.OpenDocument();
       documentWorker.EditDocument();
       documentWorker.SaveDocument();
+    }
+
+    private static void TaskAbstraction()
+    {
+      var fileName = Console.ReadLine();
+      var handlerFactory = new HandlerFactory();
+      //var handler = 
     }
   }
 }
