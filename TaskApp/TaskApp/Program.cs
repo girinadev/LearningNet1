@@ -1,4 +1,7 @@
-﻿using TaskApp.TaskClasses;
+﻿using System;
+using System.Text;
+using TaskApp.TaskAbstraction;
+using TaskApp.TaskClasses;
 using TaskApp.TaskInheritance;
 
 namespace TaskApp
@@ -7,9 +10,9 @@ namespace TaskApp
   {
     static void Main(string[] args)
     {
-      TaskClasses();
+      //TaskClasses();
 
-      TaskInheritance();
+      //TaskInheritance();
 
       TaskAbstraction();
 
@@ -173,9 +176,36 @@ namespace TaskApp
 
     private static void TaskAbstraction()
     {
-      var fileName = Console.ReadLine();
+      //1
+      Console.WriteLine("Input file name:");
+      string fileName;
+      do
+      {
+        fileName = Console.ReadLine();
+      } while (string.IsNullOrEmpty(fileName));
+
       var handlerFactory = new HandlerFactory();
-      //var handler = 
+      var handler = handlerFactory.GetHandler(fileName);
+      handler.Create();
+      handler.Open();
+      handler.Change();
+      handler.Save();
+
+      //2
+      IPlayable player = new Player();
+      player.Play();
+      player.Pause();
+      player.Play();
+      player.Stop();
+
+      var playerWithRecording = (IRecodable) player;
+      playerWithRecording.Record();
+      playerWithRecording.Pause();
+      playerWithRecording.Record();
+      playerWithRecording.Stop();
+
+      player.Play();
+      player.Stop();
     }
   }
 }

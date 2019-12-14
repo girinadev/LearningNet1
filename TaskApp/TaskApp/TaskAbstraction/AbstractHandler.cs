@@ -1,12 +1,14 @@
-using System;
-
 namespace TaskApp.TaskAbstraction
 {
   public abstract class AbstractHandler
   {
-    abstract void Open();
-    abstract void Create();
-    abstract void Chenge();
-    abstract void Save();
+    protected AbstractHandler(string fileName)
+    {
+    }
+
+    public abstract void Open();
+    public abstract void Create();
+    public abstract void Change();
+    public abstract void Save();
   }
 }

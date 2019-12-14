@@ -4,21 +4,31 @@ namespace TaskApp.TaskAbstraction
 {
   public class XMLHandler : AbstractHandler
   {
-    public void Open()
-    {
+    private readonly string _fileName;
 
+    public XMLHandler(string fileName) : base(fileName)
+    {
+      _fileName = fileName;
     }
-    public void Create()
-    {
 
+    public override void Open()
+    {
+      Console.WriteLine($"Xml file '{_fileName}' opened");
     }
-    public void Chenge()
-    {
 
+    public override void Create()
+    {
+      Console.WriteLine($"Xml file '{_fileName}' created");
     }
-    public void Save()
-    {
 
+    public override void Change()
+    {
+      Console.WriteLine($"Xml file '{_fileName}' changed");
+    }
+
+    public override void Save()
+    {
+      Console.WriteLine($"Xml file '{_fileName}' saved");
     }
   }
 }

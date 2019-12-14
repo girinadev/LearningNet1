@@ -4,24 +4,31 @@ namespace TaskApp.TaskAbstraction
 {
   public class DOCHandler : AbstractHandler
   {
-    public void Open()
-    {
+    private readonly string _fileName;
 
+    public DOCHandler(string fileName) : base(fileName)
+    {
+      _fileName = fileName;
     }
 
-    public void Create()
+    public override void Open()
     {
-      Console.W
+      Console.WriteLine($"Doc file '{_fileName}' opened");
     }
 
-    public void Chenge()
+    public override void Create()
     {
-
+      Console.WriteLine($"Doc file '{_fileName}' created");
     }
 
-    public void Save()
+    public override void Change()
     {
+      Console.WriteLine($"Doc file '{_fileName}' changed");
+    }
 
+    public override void Save()
+    {
+      Console.WriteLine($"Doc file '{_fileName}' saved");
     }
   }
 }

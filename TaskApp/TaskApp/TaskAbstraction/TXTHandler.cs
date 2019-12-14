@@ -4,21 +4,31 @@ namespace TaskApp.TaskAbstraction
 {
   public class TXTHandler : AbstractHandler
   {
-    public void Open()
-    {
+    private readonly string _fileName;
 
+    public TXTHandler(string fileName) : base(fileName)
+    {
+      _fileName = fileName;
     }
-    public void Create()
-    {
 
+    public override void Open()
+    {
+      Console.WriteLine($"Txt file '{_fileName}' opened");
     }
-    public void Chenge()
-    {
 
+    public override void Create()
+    {
+      Console.WriteLine($"Txt file '{_fileName}' created");
     }
-    public void Save()
-    {
 
+    public override void Change()
+    {
+      Console.WriteLine($"Txt file '{_fileName}' changed");
+    }
+
+    public override void Save()
+    {
+      Console.WriteLine($"Txt file '{_fileName}' saved");
     }
   }
 }
