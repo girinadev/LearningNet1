@@ -1,21 +1,356 @@
-﻿body {
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 14px;
-}
-
-* {
+﻿* {
   box-sizing: border-box;
-  padding: 0;
-  margin: 0;
 }
 
-.wrapper {
-  display: grid;
-  /*grid-template-rows: 50px 30% 50% 30% 50px;*/
-  grid-template-columns: 100px 1fr 100px;
+a {
+  text-decoration: none;
 }
+
+body {
+  font-family: Arial,Helvetica Neue,Helvetica,sans-serif;
+  font-size: 14px;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: auto;
+  grid-template-rows: 10vh auto auto auto auto 10vh;
+}
+
+header, footer, #main {
+  grid-column: 1;
+}
+
+header {
+  background-color: #efefef;
+  grid-row: 1/3;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 10vh repeat(2, auto);
+}
+
+footer {
+  background: #615a57;
+}
+
+footer, header .menu {
+  height: 10vh;
+}
+
+#main, footer, .menu, .box, .menu2 {
+  padding-left: 15%;
+  padding-right: 15%;
+}
+
+/* header */
+.menu {
+  grid-column: 1/6;
+  grid-row: 1/1;
+  display: grid;
+  grid-template-columns: 3fr 1fr;
+  grid-template-rows: auto;
+  background: #615a57;
+}
+
+  .menu > div {
+    align-items: center;
+    align-self: center;
+  }
+
+  .menu a {
+    color: #c2c0bf;
+  }
+
+    .menu a:hover {
+      color: #f79e78;
+    }
+
+  .menu .menu-left {
+    grid-column: 1;
+    grid-row: 1;
+    align-items: center;
+    align-self: center;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-template-rows: auto;
+  }
+
+    .menu .menu-left a:nth-of-type(4) {
+      grid-column: 4/span 2;
+    }
+
+  .menu .menu-right {
+    grid-column: 2/2;
+    justify-self: end;
+  }
+
+.menu-right i {
+  color: #f79e78;
+  font-size: 1.8em;
+  display: inline-block;
+  margin-right: 0.3em;
+}
+
+.menu2 {
+  grid-row: 3;
+  display: grid;
+  grid-template-columns: 1.8fr repeat(5, 1fr);
+  grid-template-rows: 1fr;
+  padding-bottom: 1em;
+}
+
+  .menu2 > div, .menu2 a {
+    align-self: center;
+    text-align: center;
+  }
+
+  .menu2 > div {
+    display: inline-grid;
+    grid-row: 1;
+    grid-template-columns: 2em 1fr;
+  }
+
+  .menu2 a {
+    color: #343434;
+    font-weight: 500;
+  }
+
+    .menu2 a:hover {
+      color: #f79e78;
+    }
+
+  .menu2 div a:first-of-type {
+    display: inline-block;
+    font-size: 1.8em;
+    height: 1.8em;
+    width: 1.8em;
+    line-height: 1.8em;
+    background: #f79e78;
+    border-radius: 50%;
+    text-align: center;
+    color: #ffffff;
+    margin-right: 0.6em;
+  }
 
 .box {
-  border: 1px solid red;
-  background-color: blueviolet;
+  grid-row: 2/2;
+  display: grid;
+  grid-template-columns: 1fr 3fr 120px 150px 150px;
+  grid-template-rows: auto;
+  font-size: 0.9em;
+  padding-top: 1em;
+  padding-bottom: 1em;
 }
+
+  .box > div {
+    justify-self: center;
+    align-items: center;
+    align-self: center;
+  }
+
+  .box .logo {
+    justify-self: start;
+    grid-row: 1/2;
+  }
+
+  .box a {
+    color: #f79e78;
+  }
+
+  .box .order {
+    justify-self: end;
+  }
+
+    .box .order a {
+      display: inline-block;
+      background-color: #f79e78;
+      color: #ffffff;
+      padding: 0.8em 1.5em;
+      border-radius: 25px;
+    }
+
+  .box .icons a {
+    display: inline-block;
+    font-size: 1.8em;
+    color: #c4c4c4;
+    margin: 0 0.3em;
+  }
+
+    .box .icons a:hover {
+      color: #f79e78;
+    }
+
+  .box .phones div:first-of-type {
+    font-size: 0.9em;
+    margin-bottom: 0.5em;
+  }
+
+    .box .phones div:first-of-type a {
+      color: #000000;
+    }
+
+    .box .phones div:first-of-type span {
+      font-weight: bold;
+    }
+
+  .box .search {
+    min-width: 330px;
+    padding: 0.8em 1.5em;
+    background: #fbfbfb;
+    border-radius: 25px;
+    border: none;
+  }
+
+    .box .search input[type=search] {
+      float: left;
+      border: none;
+      background: #fbfbfb;
+      margin: 0;
+      min-width: 270px;
+      line-height: 1.8em;
+    }
+
+    .box .search button {
+      padding: 0;
+      float: left;
+      background: #fbfbfb;
+      cursor: pointer;
+      margin: 0;
+      color: #f79e78;
+      border: none;
+      font-size: 1.8em;
+      font-weight: 200;
+    }
+
+
+/*main*/
+#main {
+  background-color: #fdfdfd;
+}
+
+  #main section {
+    padding: 2em 0;
+  }
+
+    #main section h1 {
+      font-size: 2em;
+    }
+
+.slider {
+  grid-column: 1/6;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  grid-template-rows: 1fr 1fr;
+}
+
+  .slider .left {
+    grid-column: 1/1;
+    grid-row: 1/span 2;
+  }
+
+  .slider .right {
+    grid-column: 2/2;
+    grid-row: 1/span 2;
+    display: inline-grid;
+  }
+
+  .slider .slide {
+    background-color: #fff4bd;
+    border-radius: 20px;
+    padding: 1.5em 3em;
+    margin: 0.3em;
+  }
+
+  .slider .left .slide {
+    background-image: url('imgs/bg-slide-left.png');
+    background-repeat: no-repeat;
+    background-position: right bottom;
+  }
+
+  .slider .slide h2 {
+    font-size: 2em;
+    text-transform: uppercase;
+  }
+
+  .slider .slide p {
+    font-size: 1.3em;
+    margin-bottom: 1.8em;
+    width: 70%;
+    min-width: 250px;
+  }
+
+  .slider .slide a.details {
+    font-size: 0.8em;
+    display: inline-block;
+    background-color: #f79e78;
+    color: #ffffff;
+    padding: 0.8em 1.5em;
+    border-radius: 25px;
+  }
+
+  .slider .slide .nav {
+    text-align: center;
+    margin-top: 2em;
+  }
+
+    .slider .slide .nav a {
+      font-size: 0.5em;
+      display: inline-block;
+      color: #f79e78;
+      margin: 0.3em;
+    }
+
+  .slider .right .slide {
+    text-align: right;
+    padding: 0.6em;
+    background-color: #595f6b;
+    justify-self: stretch;
+  }
+
+    .slider .right .slide p {
+      color: #ffffff;
+    }
+
+.offers {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: 1fr;
+}
+
+  .offers a {
+    padding: 0 1em;
+  }
+
+    .offers a span {
+      display: block;
+    }
+
+    .offers a * {
+      color: #000000;
+      text-align: center;
+    }
+
+    .offers a span:nth-of-type(2n+0) {
+      font-weight: bold;
+      margin: 0.5em 0;
+    }
+
+#main section:last-of-type {
+  grid-row: 1;
+  grid-row: 6;
+  align-self: center;
+  text-align: center;
+}
+
+/*footer*/
+footer {
+  color: #fbfbfb;
+  grid-row: 7;
+  grid-column: 1;
+  align-self: center;
+}
+
+  footer > div {
+    padding: 1.5em 0;
+    text-align: center;
+  }
