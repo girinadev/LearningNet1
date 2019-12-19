@@ -5,4 +5,12 @@
     <TargetFramework>netcoreapp2.2</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="ShiritoriGame\Shiritori.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="ShiritoriGame\Shiritori.js" />
+  </ItemGroup>
+
 </Project>
