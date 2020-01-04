@@ -3,6 +3,7 @@ using System.Text;
 using TaskApp.TaskAbstraction;
 using TaskApp.TaskClasses;
 using TaskApp.TaskInheritance;
+using TaskApp.TaskStatic;
 
 namespace TaskApp
 {
@@ -14,7 +15,9 @@ namespace TaskApp
 
       //TaskInheritance();
 
-      TaskAbstraction();
+      //TaskAbstraction();
+
+      TaskStatic();
 
       Console.ReadLine();
     }
@@ -198,7 +201,7 @@ namespace TaskApp
       player.Play();
       player.Stop();
 
-      var playerWithRecording = (IRecodable) player;
+      var playerWithRecording = (IRecodable)player;
       playerWithRecording.Record();
       playerWithRecording.Pause();
       playerWithRecording.Record();
@@ -206,6 +209,46 @@ namespace TaskApp
 
       player.Play();
       player.Stop();
+    }
+
+    private static void TaskStatic()
+    {
+      //1
+      Console.WriteLine("5 + 9 = {0}", Calculator.Add(5, 9));
+      Console.WriteLine("5 - 9 = {0}", Calculator.Sub(5, 9));
+      Console.WriteLine("5 * 9 = {0}", Calculator.Multiply(5, 9));
+      Console.WriteLine("5 / 9 = {0}", Calculator.Divide(5, 9));
+
+      //2
+      int[] arr = new int[] { 6, 8, 1, 3, 89, 2, 56, 87, 0, -7, 2, 77, -5 };
+      arr.Order();
+
+      PrintToConsole(arr);
+
+      //3
+      arr = new int[] { 6, 8, 1, 3, 89, 2, 56, 87, 0, -7, 2, 77, -5 };
+      arr.Order(true);
+      PrintToConsole(arr);
+
+      arr = new int[] { 6, 8, 1, 3, 89, 2, 56, 87, 0, -7, 2, 77, -5 };
+      arr.Order(false);
+      PrintToConsole(arr);
+
+      //4
+      var s1 = "Happy new year new";
+      Console.WriteLine("{0} == {1}", s1.Substring1(6, 3), s1.Substring(6, 3));
+      Console.WriteLine("{0} == {1}", s1.IndexOf1("year").ToString(), s1.IndexOf("year").ToString());
+      Console.WriteLine("{0} == {1}", s1.Replace1("new", "old"), s1.Replace("new", "old"));
+    }
+
+    private static void PrintToConsole(int[] arr)
+    {
+      foreach (var item in arr)
+      {
+        Console.WriteLine(item);
+      }
+
+      Console.WriteLine();
     }
   }
 }
