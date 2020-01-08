@@ -4,6 +4,7 @@ using TaskApp.TaskAbstraction;
 using TaskApp.TaskClasses;
 using TaskApp.TaskInheritance;
 using TaskApp.TaskStatic;
+using TaskApp.TaskStruct;
 
 namespace TaskApp
 {
@@ -17,7 +18,9 @@ namespace TaskApp
 
       //TaskAbstraction();
 
-      TaskStatic();
+      //TaskStatic();
+
+      TaskStruct();
 
       Console.ReadLine();
     }
@@ -249,6 +252,89 @@ namespace TaskApp
       }
 
       Console.WriteLine();
+    }
+
+    private static void TaskStruct()
+    {
+      //1
+      var noteBook = new Notebook("Z500", "Lenovo", 10000M);
+      noteBook.Print();
+
+      //2
+      var trains = new Train[5];
+      for (int i = 0; i < trains.Length; i++)
+      {
+        string destTitle;
+        string trainNumber;
+        string departureTime;
+        do
+        {
+          Console.WriteLine("Please train destination title:");
+          destTitle = Console.ReadLine();
+          Console.WriteLine("Please train number:");
+          trainNumber = Console.ReadLine();
+          Console.WriteLine("Please train departure time:");
+          departureTime = Console.ReadLine();
+        } while (string.IsNullOrEmpty(destTitle)
+                 || string.IsNullOrEmpty(trainNumber)
+                 || string.IsNullOrEmpty(departureTime));
+
+        trains[i] = new Train(destTitle, trainNumber, departureTime);
+      }
+
+      Array.Sort<Train>(trains, (t, t1) => t.TrainNumber.CompareTo(t1.TrainNumber));
+
+      Console.WriteLine("Please train input what train number you search?");
+      var trainNumberToSearch = Console.ReadLine();
+      Train train = Array.Find(trains, t => t.TrainNumber.Equals(trainNumberToSearch));
+      if (string.IsNullOrEmpty(train.TrainNumber))
+        Console.WriteLine("Train not found");
+      else
+        Console.WriteLine("Train info: {0}", train.ToString());
+
+      //3
+      var myClass = new MyClass();
+      myClass.change = "не изменено";
+      ClassTaker(myClass);
+      Console.WriteLine(myClass.change);
+
+      var myStruct = new MyStruct();
+      myStruct.change = "не изменено";
+      StruktTaker(myStruct);
+      Console.WriteLine(myStruct.change);
+
+      //4
+      string birthDayStr;
+      DateTime birthDay;
+      do
+      {
+        Console.WriteLine("Please input your birthday in format: MM/dd/yyyy");
+        birthDayStr = Console.ReadLine();
+      } while (!DateTime.TryParse(birthDayStr, out birthDay));
+
+      Console.WriteLine("To you birthday left: {0}", BirthdayCounter.DaysLeft(birthDay));
+
+      //5
+      ConsolePrinter.Print("green", 10);
+
+      //6
+      var accauntant = new Accauntant();
+      var p = Post.Designer;
+      Console.WriteLine("{0}: {1}", p.ToString(), accauntant.AskForBonus(p, 30));
+      p = Post.Devepoper;
+      Console.WriteLine("{0}: {1}", p.ToString(), accauntant.AskForBonus(p, 190));
+      p = Post.QA;
+      Console.WriteLine("{0}: {1}", p.ToString(), accauntant.AskForBonus(p, 200));
+    }
+
+    private static void ClassTaker(MyClass myClass)
+    {
+      myClass.change = "изменено";
+    }
+
+    private static void StruktTaker(MyStruct myStruct)
+    {
+      myStruct.change = "изменено";
     }
   }
 }
