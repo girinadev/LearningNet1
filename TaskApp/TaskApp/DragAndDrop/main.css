@@ -1,0 +1,64 @@
+﻿*, *:before, *:after {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, Roboto, Segoe UI, Helvetica Neue, Helvetica, Arial, sans-serif;
+}
+
+
+.board {
+  display: flex;
+  flex-direction: rows;
+  justify-content: space-around;
+  align-items: flex-start;
+  align-content: stretch;
+  background: linear-gradient(#3EB9DE, #3A80DE);
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+}
+
+.column {
+  min-width: 200px;
+  padding: 12px;
+  margin-right: 8px;
+  background: #E5EFF5;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+
+  .column .header {
+    font-size: 1rem;
+    letter-spacing: .5px;
+    margin: 0 0 8px 3px;
+    color: #2f2f2f;
+  }
+
+.card, .card-editor, .card-shadow {
+  background-color: #ffffff;
+  margin: 15px 0;
+  padding: 12px;
+  border-radius: 3px;
+}
+
+.card-shadow {
+  background-color: slategrey;
+}
+
+  .card:hover {
+    cursor: pointer;
+  }
+
+.column .add-card, .column .edit-card {
+  color: #aaa;
+  font-size: .9rem;
+  margin: 0 0 5px 5px;
+  text-decoration: none;
+}
