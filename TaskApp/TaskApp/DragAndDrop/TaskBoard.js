@@ -1,11 +1,127 @@
-﻿//https://trello.com/en
-//https://learn.javascript.ru/drag-and-drop-objects
-class TaskBoard {
+﻿class TaskBoard {
 
-  static dragTask = {};
-  static taskFactory = new AvatarFactory();
+  static dragCard = {};
+  static avatarFactory = new AvatarFactory();
+  static taskService = new TaskService();
 
-  static onMouseDown(e) {
+  static init() {
+
+    document.querySelectorAll('.add-card')
+      .forEach((item) => { item.onclick = TaskBoard.newCard; });
+
+    TaskBoard.taskService.getTasks()
+      .forEach((t) => { TaskBoard.addCard(t); });
+
+    document.onmousemove = TaskBoard.mouseMove;
+    document.onmouseup = TaskBoard.mouseUp;
+    document.onmousedown = TaskBoard.mouseDown;
+    //document.onmouseover = TaskBoard.mouseover;
+    document.onkeydown = (e) => { if (e.keyCode === 27) TaskBoard.cancelCardEditor(); };
+  }
+
+  static addCard(c) {
+    const columnElem = document.querySelector('[data-column-status="' + c.status + '"] .cards');
+    if (columnElem) {
+      const cardInnerElem = document.createElement('span');
+      cardInnerElem.innerText = c.title;
+      cardInnerElem.setAttribute('class', 'card-text');
+
+      var editCardElem = document.createElement('a');
+      editCardElem.innerHTML = '<i class="fa fa-pencil"></i>';
+      editCardElem.setAttribute('class', 'edit-card');
+      editCardElem.onclick = TaskBoard.editCard;
+
+      var cardElem = document.createElement('div');
+      cardElem.appendChild(cardInnerElem);
+      cardElem.appendChild(editCardElem);
+      cardElem.setAttribute('class', 'card');
+      cardElem.setAttribute('data-status', c.status);
+      cardElem.setAttribute('data-id', c.id);
+
+      columnElem.appendChild(cardElem);
+    }
+  }
+
+  static editCard(e) {
+    const cardElem = e.target.closest('.card');
+    if (!cardElem) return;
+
+    const task = TaskBoard.taskService.getTask(cardElem.getAttribute('data-id'));
+    if (!task) return;
+
+    TaskBoard.cancelCardEditor();
+
+    const cardInputElem = document.createElement('input');
+    cardInputElem.setAttribute('type', 'text');
+    cardInputElem.setAttribute('class', 'card-text');
+    cardInputElem.setAttribute('placeholder', 'Enter a title for this card…');
+    cardInputElem.value = task.title;
+    cardInputElem.onkeydown = (e) => {
+      if (e.keyCode === 13) {
+        TaskBoard.cancelCardEditor();
+        cardElem.style.display = null;
+        cardElem.querySelector('.card-text').innerText = cardInputElem.value;
+
+        task.title = cardInputElem.value;
+        TaskBoard.taskService.editTask(task);
+      }
+    };
+
+    let cardEditorElem = document.createElement('div');
+    cardEditorElem.appendChild(cardInputElem);
+    cardEditorElem.setAttribute('class', 'card-editor');
+
+    cardElem.parentNode.insertBefore(cardEditorElem, cardElem.nextSibling);
+
+    cardInputElem.focus();
+
+    cardElem.style.display = 'none';
+  }
+
+  static newCard(e) {
+    const columnElem = e.target.closest('.column');
+    if (!columnElem) return;
+
+    TaskBoard.cancelCardEditor();
+
+    const cardInputElem = document.createElement('input');
+    cardInputElem.setAttribute('type', 'text');
+    cardInputElem.setAttribute('class', 'card-text');
+    cardInputElem.setAttribute('placeholder', 'Enter a title for this card…');
+    cardInputElem.onkeydown = (e) => {
+      if (e.keyCode === 13) {
+        const task = { title: cardInputElem.value, status: columnElem.getAttribute('data-column-status') };
+        TaskBoard.addCard(task);
+        TaskBoard.cancelCardEditor();
+        TaskBoard.taskService.addTask(task);
+      }
+    };
+
+    let cardEditorElem = document.createElement('div');
+    cardEditorElem.appendChild(cardInputElem);
+    cardEditorElem.setAttribute('class', 'card-editor');
+
+    columnElem.appendChild(cardEditorElem);
+
+    cardInputElem.focus();
+
+    columnElem.querySelector('.add-card').style.display = 'none';
+  }
+
+  static cancelCardEditor(e) {
+    let cardEditorElem = document.querySelector('.card-editor');
+    if (cardEditorElem) {
+      cardEditorElem.parentNode.removeChild(cardEditorElem);
+
+      document.querySelectorAll('.add-card')
+        .forEach(i => { i.style.display = null; });
+
+      document.querySelectorAll('.card')
+        .forEach(i => { i.style.display = null; });
+    }
+  }
+
+  static mouseDown(e) {
     if (e.which !== 1)
       return false;
 
@@ -13,70 +129,87 @@ class TaskBoard {
     if (!elem)
       return false;
 
-    TaskBoard.dragTask.elem = elem;
-    TaskBoard.dragTask.downX = e.pageX;
-    TaskBoard.dragTask.downY = e.pageY;
+    TaskBoard.dragCard.elem = elem;
+    TaskBoard.dragCard.downX = e.pageX;
+    TaskBoard.dragCard.downY = e.pageY;
 
     return false;
   }
 
-  static onMouseMove(e) {
-    if (!TaskBoard.dragTask.elem)
+  static mouseMove(e) {
+    if (!TaskBoard.dragCard.elem)
       return false;
 
-    if (!TaskBoard.dragTask.avatar) {
-      // если мышь передвинулась в нажатом состоянии недостаточно далеко
-      if (Math.abs(e.pageX - TaskBoard.dragTask.downX) < 5 && Math.abs(e.pageY - TaskBoard.dragTask.downY) < 5) 
+    if (!TaskBoard.dragCard.avatar) {
+      if (Math.abs(e.pageX - TaskBoard.dragCard.downX) < 5 && Math.abs(e.pageY - TaskBoard.dragCard.downY) < 5)
         return false;
-      
-      TaskBoard.dragTask.avatar = TaskBoard.taskFactory.createAvatar(TaskBoard.dragTask.elem, e);
-      if (!TaskBoard.dragTask.avatar) { // отмена переноса, нельзя "захватить" за эту часть элемента
-        TaskBoard.dragTask = {};
+
+      TaskBoard.dragCard.avatar = TaskBoard.avatarFactory.createAvatar(TaskBoard.dragCard.elem, e);
+      if (!TaskBoard.dragCard.avatar) {
+        TaskBoard.dragCard = {};
         return false;
       }
 
-      // создать вспомогательные свойства shiftX/shiftY
-      const rect = TaskBoard.dragTask.avatar.getBoundingClientRect();
-      TaskBoard.dragTask.shiftX = TaskBoard.dragTask.downX - (rect.left + pageXOffset);
-      TaskBoard.dragTask.shiftY = TaskBoard.dragTask.downY - (rect.top + pageYOffset);
+      const rect = TaskBoard.dragCard.avatar.getBoundingClientRect();
+      TaskBoard.dragCard.shiftX = TaskBoard.dragCard.downX - (rect.left + pageXOffset);
+      TaskBoard.dragCard.shiftY = TaskBoard.dragCard.downY - (rect.top + pageYOffset);
 
-      const avatar = TaskBoard.dragTask.avatar;
-      // инициировать начало переноса
+      const avatar = TaskBoard.dragCard.avatar;
       document.body.appendChild(avatar);
       avatar.style.zIndex = 9999;
       avatar.style.position = 'absolute';
     }
 
-    // отобразить перенос объекта при каждом движении мыши
-    TaskBoard.dragTask.avatar.style.left = e.pageX - TaskBoard.dragTask.shiftX + 'px';
-    TaskBoard.dragTask.avatar.style.top = e.pageY - TaskBoard.dragTask.shiftY + 'px';
+    TaskBoard.dragCard.avatar.style.left = e.pageX - TaskBoard.dragCard.shiftX + 'px';
+    TaskBoard.dragCard.avatar.style.top = e.pageY - TaskBoard.dragCard.shiftY + 'px';
+
+    //
+    TaskBoard.dragCard.avatar.hidden = true;
+    const elem = document.elementFromPoint(event.clientX, event.clientY);
+    TaskBoard.dragCard.avatar.hidden = !TaskBoard.dragCard.avatar.hidden;    
+    console.log(elem);
+    const columnElem = elem.closest('.cards');
+    if (columnElem) {
+      document.querySelectorAll('.card-shadow')
+        .forEach(i => { i.parentNode.removeChild(i);});
+
+      const shadowCardElem = document.createElement('div');
+      shadowCardElem.setAttribute('class', 'card-shadow');
+      columnElem.parentNode.insertBefore(shadowCardElem, columnElem.nextSibling);
+    }
+    
 
     return false;
   }
 
-  static onMouseUp(e) {
-    if (TaskBoard.dragTask.avatar) {
-
-      // спрячем переносимый элемент
-      TaskBoard.dragTask.avatar.hidden = true;
-      // получить самый вложенный элемент под курсором мыши
+  static mouseUp(e) {
+    if (TaskBoard.dragCard.avatar) {
+      TaskBoard.dragCard.avatar.hidden = true;
       const elem = document.elementFromPoint(event.clientX, event.clientY);
-      // показать переносимый элемент обратно
-      TaskBoard.dragTask.avatar.hidden = false;
-      const dropElem = elem === null || elem.closest('.column') === null ? null : elem.closest('.column').querySelector('.tasks');
+      TaskBoard.dragCard.avatar.hidden = !TaskBoard.dragCard.avatar.hidden;
 
-      if (!dropElem) {
-        TaskBoard.dragTask.avatar.rollback();
+      document.querySelectorAll('.card-shadow')
+        .forEach(i => { i.parentNode.removeChild(i); });
+
+      const cardsElem = elem === null || elem.closest('.column') === null
+        ? null
+        : elem.closest('.column').querySelector('.cards');
+
+      if (!cardsElem) {
+        TaskBoard.dragCard.avatar.cancel();
       } else {
-        TaskBoard.dragTask.elem.style = null;
-        dropElem.appendChild(TaskBoard.dragTask.elem);
+        TaskBoard.dragCard.elem.style = null;
+        cardsElem.appendChild(TaskBoard.dragCard.elem);
+
+        const task = TaskBoard.taskService.getTask(TaskBoard.dragCard.elem.getAttribute('data-id'));
+        task.status = elem.closest('.column').getAttribute('data-column-status');
+        TaskBoard.taskService.editTask(task);
       }
     }
 
-    TaskBoard.dragTask = {};
+    TaskBoard.dragCard = {};
   }
 }
 
-document.onmousemove = TaskBoard.onMouseMove;
-document.onmouseup = TaskBoard.onMouseUp;
-document.onmousedown = TaskBoard.onMouseDown;
+TaskBoard.init();
+//https://trello.com/b/Panr4Oqo/learning-plan

@@ -3,51 +3,39 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <meta charset="utf-8" />
-  <title>Project Management</title>
+  <title>Board</title>
+  <!-- Add icon library -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="main.css" rel="stylesheet" />
 </head>
 <body>
   <div class="board">
-    <div class="column">
+    <div class="column" data-column-status="todo">
       <h5 class="header">To Do</h5>
-      <div class="tasks">
-        <div class="card" data-status="todo">
-          <div class="card-text">Client meeting</div>
-        </div>
-        <div class="card" data-status="todo">
-          <div class="card-text">Plan webinar</div>
-        </div>
-        <div class="card" data-status="todo">
-          <div class="card-text">Email newsletter</div>
-        </div>
+      <div class="cards">
       </div>
       <a class="add-card" href="#"> Add a card… </a>
     </div>
-    <div class="column">
+    <div class="column" data-column-status="inprogress">
       <h5 class="header">In Progress</h5>
-      <div class="tasks">
+      <div class="cards">
       </div>
       <a class="add-card" href="#"> Add a card… </a>
     </div>
-    <div class="column">
+    <div class="column" data-column-status="intesting">
       <h5 class="header">In Testing</h5>
-      <div class="tasks">
+      <div class="cards">
       </div>
       <a class="add-card" href="#"> Add a card… </a>
     </div>
-    <div class="column">
+    <div class="column" data-column-status="done">
       <h5 class="header">Done</h5>
-      <div class="tasks">
-        <div class="card" data-status="done" draggable="true">
-          <div class="card-text">Publish podcast</div>
-        </div>
-        <div class="card" data-status="done" draggable="true">
-          <div class="card-text">Launch website</div>
-        </div>
+      <div class="cards">
       </div>
       <a class="add-card" href="#"> Add a card… </a>
     </div>
   </div>
+  <script src="TaskService.js"></script>
   <script src="AvatarFactory.js"></script>
   <script src="TaskBoard.js"></script>
 </body>

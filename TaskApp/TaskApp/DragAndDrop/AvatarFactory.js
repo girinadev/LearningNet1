@@ -11,7 +11,7 @@
       zIndex: avatar.zIndex || ''
     };
 
-    avatar.rollback = () => {
+    avatar.cancel = () => {
       old.parent.insertBefore(avatar, old.nextSibling);
       avatar.style.position = old.position;
       avatar.style.left = old.left;
