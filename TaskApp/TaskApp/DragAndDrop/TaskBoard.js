@@ -1,7 +1,7 @@
 ﻿class TaskBoard {
 
   static dragCard = {};
-  static avatarFactory = new AvatarFactory();
+  static elementsFactory = new ElementFactory();
   static taskService = new TaskService();
 
   static init() {
@@ -15,7 +15,6 @@
     document.onmousemove = TaskBoard.mouseMove;
     document.onmouseup = TaskBoard.mouseUp;
     document.onmousedown = TaskBoard.mouseDown;
-    //document.onmouseover = TaskBoard.mouseover;
     document.onkeydown = (e) => { if (e.keyCode === 27) TaskBoard.cancelCardEditor(); };
   }
 
@@ -26,14 +25,14 @@
       cardInnerElem.innerText = c.title;
       cardInnerElem.setAttribute('class', 'card-text');
 
-      var editCardElem = document.createElement('a');
-      editCardElem.innerHTML = '<i class="fa fa-pencil"></i>';
-      editCardElem.setAttribute('class', 'edit-card');
-      editCardElem.onclick = TaskBoard.editCard;
+      //var editCardElem = document.createElement('a');
+      //editCardElem.innerHTML = '<i class="fa fa-pencil"></i>';
+      //editCardElem.setAttribute('class', 'edit-card');
+      //editCardElem.onclick = TaskBoard.editCard;
 
       var cardElem = document.createElement('div');
       cardElem.appendChild(cardInnerElem);
-      cardElem.appendChild(editCardElem);
+      //cardElem.appendChild(editCardElem);
       cardElem.setAttribute('class', 'card');
       cardElem.setAttribute('data-status', c.status);
       cardElem.setAttribute('data-id', c.id);
@@ -144,8 +143,9 @@
       if (Math.abs(e.pageX - TaskBoard.dragCard.downX) < 5 && Math.abs(e.pageY - TaskBoard.dragCard.downY) < 5)
         return false;
 
-      TaskBoard.dragCard.avatar = TaskBoard.avatarFactory.createAvatar(TaskBoard.dragCard.elem, e);
-      if (!TaskBoard.dragCard.avatar) {
+      TaskBoard.dragCard.avatar = TaskBoard.elementsFactory.createAvatar(TaskBoard.dragCard.elem, e);
+      TaskBoard.dragCard.shadow = TaskBoard.elementsFactory.createShadow(TaskBoard.dragCard.elem, e);
+      if (!TaskBoard.dragCard.avatar || !TaskBoard.dragCard.shadow) {
         TaskBoard.dragCard = {};
         return false;
       }
@@ -163,28 +163,33 @@
     TaskBoard.dragCard.avatar.style.left = e.pageX - TaskBoard.dragCard.shiftX + 'px';
     TaskBoard.dragCard.avatar.style.top = e.pageY - TaskBoard.dragCard.shiftY + 'px';
 
-    //
     TaskBoard.dragCard.avatar.hidden = true;
     const elem = document.elementFromPoint(event.clientX, event.clientY);
     TaskBoard.dragCard.avatar.hidden = !TaskBoard.dragCard.avatar.hidden;
 
-    //console.log(elem);
 
-    const columnElem = elem.closest('.cards');
-    if (columnElem) {
-      const isKeepCurrentCardShadow = elem.classList.contains('cards') && columnElem.querySelector('.card-shadow');
+    if (elem && elem.closest('.column')) {
+      const isKeepCurrentCardShadow = elem.classList.contains('cards');
+
       if (!isKeepCurrentCardShadow) {
-        document.querySelectorAll('.card-shadow')
-          .forEach(i => { i.parentNode.removeChild(i); });
 
-        const shadowCardElem = document.createElement('div');
-        shadowCardElem.setAttribute('class', 'card-shadow');
-
-        if (elem.closest('.card'))
-          elem.closest('.card').insertAdjacentElement("afterend", shadowCardElem);
+        const isKeepCurrentCardShadow = elem.classList.contains('cards');
+        if (!isKeepCurrentCardShadow) {
+          if (elem.closest('.card')) {
+            elem.closest('.card').insertAdjacentElement("afterend", TaskBoard.dragCard.shadow);
+          }
+          else if (elem.closest('.column').querySelector('.cards').childElementCount === 0) {
+            elem.closest('.column').querySelector('.cards').insertAdjacentElement("beforeend", TaskBoard.dragCard.shadow);
+          }
+        }
+      }
+      else {
+        const rect1 = TaskBoard.dragCard.avatar.getBoundingClientRect();
+        const elem2 = document.elementFromPoint(event.clientX, rect1.top - 15);
+        if (elem2.closest('.card'))
+          elem2.closest('.card').insertAdjacentElement("afterend", TaskBoard.dragCard.shadow);
       }
     }
-
 
     return false;
   }
@@ -195,27 +200,27 @@
       const elem = document.elementFromPoint(event.clientX, event.clientY);
       TaskBoard.dragCard.avatar.hidden = !TaskBoard.dragCard.avatar.hidden;
 
-      //document.querySelectorAll('.card-shadow')
-      //  .forEach(i => { i.parentNode.removeChild(i); });
-
       const cardsElem = elem === null || elem.closest('.column') === null
         ? null
         : elem.closest('.column').querySelector('.cards');
 
       if (!cardsElem) {
         TaskBoard.dragCard.avatar.cancel();
+        TaskBoard.dragCard.shadow.cancel();
       } else {
-        const shadowElem = cardsElem.querySelector('.card-shadow');
 
-        if (!shadowElem) {
+        if (!TaskBoard.dragCard.shadow) {
           TaskBoard.dragCard.avatar.cancel();
+          TaskBoard.dragCard.shadow.cancel();
         } else {
           TaskBoard.dragCard.elem.style = null;
-          shadowElem.parentNode.replaceChild(TaskBoard.dragCard.elem, shadowElem);
+          TaskBoard.dragCard.shadow.parentNode.replaceChild(TaskBoard.dragCard.elem, TaskBoard.dragCard.shadow);
 
-          const task = TaskBoard.taskService.getTask(TaskBoard.dragCard.elem.getAttribute('data-id'));
-          task.status = elem.closest('.column').getAttribute('data-column-status');
-          TaskBoard.taskService.editTask(task);
+          //if (elem.closest('.column')) {
+          //  const task = TaskBoard.taskService.getTask(TaskBoard.dragCard.elem.getAttribute('data-id'));
+          //  task.status = elem.closest('.column').getAttribute('data-column-status');
+          //  TaskBoard.taskService.editTask(task);
+          //}
         }
       }
     }
@@ -225,4 +230,3 @@
 }
 
 TaskBoard.init();
-//https://trello.com/b/Panr4Oqo/learning-plan

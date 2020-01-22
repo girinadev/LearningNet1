@@ -46,15 +46,16 @@ html, body {
   margin: 15px 0;
   padding: 12px;
   border-radius: 3px;
+  min-width: 200px;
 }
 
 .card-shadow {
-  background-color: slategrey;
+  background-color: slategrey;  
 }
 
-  .card:hover {
-    cursor: pointer;
-  }
+.card:hover {
+  cursor: pointer;
+}
 
 .column .add-card, .column .edit-card {
   color: #aaa;

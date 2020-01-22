@@ -1,4 +1,4 @@
-﻿class AvatarFactory {
+﻿class ElementFactory {
 
   createAvatar(elem) {
     const avatar = elem;
@@ -20,5 +20,18 @@
     };
 
     return avatar;
+  }
+
+  createShadow(elem) {
+    const shadowElem = document.createElement('div');
+    shadowElem.setAttribute('class', 'card-shadow');
+    shadowElem.innerHTML = "&nbsp;";
+    elem.insertAdjacentElement("afterend", shadowElem);
+
+    shadowElem.cancel = () => {
+      shadowElem.remove();
+    };
+
+    return shadowElem;
   }
 }

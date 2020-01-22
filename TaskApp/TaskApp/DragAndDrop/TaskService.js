@@ -32,7 +32,6 @@
       title: 'Launch website',
       status: 'done'
     }
-    //todo:count  =  20 
   ];
 
   getTasks() {
