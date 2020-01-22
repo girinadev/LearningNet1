@@ -166,18 +166,25 @@
     //
     TaskBoard.dragCard.avatar.hidden = true;
     const elem = document.elementFromPoint(event.clientX, event.clientY);
-    TaskBoard.dragCard.avatar.hidden = !TaskBoard.dragCard.avatar.hidden;    
-    console.log(elem);
+    TaskBoard.dragCard.avatar.hidden = !TaskBoard.dragCard.avatar.hidden;
+
+    //console.log(elem);
+
     const columnElem = elem.closest('.cards');
     if (columnElem) {
-      document.querySelectorAll('.card-shadow')
-        .forEach(i => { i.parentNode.removeChild(i);});
+      const isKeepCurrentCardShadow = elem.classList.contains('cards') && columnElem.querySelector('.card-shadow');
+      if (!isKeepCurrentCardShadow) {
+        document.querySelectorAll('.card-shadow')
+          .forEach(i => { i.parentNode.removeChild(i); });
 
-      const shadowCardElem = document.createElement('div');
-      shadowCardElem.setAttribute('class', 'card-shadow');
-      columnElem.parentNode.insertBefore(shadowCardElem, columnElem.nextSibling);
+        const shadowCardElem = document.createElement('div');
+        shadowCardElem.setAttribute('class', 'card-shadow');
+
+        if (elem.closest('.card'))
+          elem.closest('.card').insertAdjacentElement("afterend", shadowCardElem);
+      }
     }
-    
+
 
     return false;
   }
@@ -188,8 +195,8 @@
       const elem = document.elementFromPoint(event.clientX, event.clientY);
       TaskBoard.dragCard.avatar.hidden = !TaskBoard.dragCard.avatar.hidden;
 
-      document.querySelectorAll('.card-shadow')
-        .forEach(i => { i.parentNode.removeChild(i); });
+      //document.querySelectorAll('.card-shadow')
+      //  .forEach(i => { i.parentNode.removeChild(i); });
 
       const cardsElem = elem === null || elem.closest('.column') === null
         ? null
@@ -198,12 +205,18 @@
       if (!cardsElem) {
         TaskBoard.dragCard.avatar.cancel();
       } else {
-        TaskBoard.dragCard.elem.style = null;
-        cardsElem.appendChild(TaskBoard.dragCard.elem);
+        const shadowElem = cardsElem.querySelector('.card-shadow');
 
-        const task = TaskBoard.taskService.getTask(TaskBoard.dragCard.elem.getAttribute('data-id'));
-        task.status = elem.closest('.column').getAttribute('data-column-status');
-        TaskBoard.taskService.editTask(task);
+        if (!shadowElem) {
+          TaskBoard.dragCard.avatar.cancel();
+        } else {
+          TaskBoard.dragCard.elem.style = null;
+          shadowElem.parentNode.replaceChild(TaskBoard.dragCard.elem, shadowElem);
+
+          const task = TaskBoard.taskService.getTask(TaskBoard.dragCard.elem.getAttribute('data-id'));
+          task.status = elem.closest('.column').getAttribute('data-column-status');
+          TaskBoard.taskService.editTask(task);
+        }
       }
     }
 
