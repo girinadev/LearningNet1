@@ -5,4 +5,10 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="JsModule - Copy\**" />
+    <EmbeddedResource Remove="JsModule - Copy\**" />
+    <None Remove="JsModule - Copy\**" />
+  </ItemGroup>
+
 </Project>

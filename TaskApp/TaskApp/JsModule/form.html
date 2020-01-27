@@ -1,0 +1,48 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <title></title>
+  <script type="text/javascript" src="https://knockoutjs.com/downloads/knockout-3.5.1.js"></script>
+
+</head>
+<body>
+  <!--
+  https://habr.com/ru/post/231883/
+  https://tuhub.ru/posts/javascript-moduli-rukovodstvo-dlya-nachinayushhih
+  -->
+  <form>
+    <div>
+      <input type="text" name="checkin" value="" />
+    </div>
+    <div>
+      <input type="text" name="checkout" value="" />
+    </div>
+    <div>
+      <input type="submit" value="Расчитать" data-bind="click: calculateCost"/>
+    </div>
+  </form>
+
+  <div>Стоимость {nightsCount} в выбранном отеле стоит {totalPrice}</div>
+
+  Today's message is: <span data-bind="text: myMessage"></span>
+
+  <script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function (event) {
+      console.log('DOMContentLoaded');
+
+      var viewModel = {
+        myMessage: ko.observable(), // Initially blank
+
+        calculateCost: function() {
+          console.log('calculateCost');
+          return false;
+        }
+      };
+
+      viewModel.myMessage("Hello, world!"); // Text appears
+    });
+  </script>
+</body>
+</html>
