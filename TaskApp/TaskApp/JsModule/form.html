@@ -9,19 +9,19 @@
 <body>
   <form>
     <div>
-      <p>WHERE</p>
-      <select name="where">
+      <p>WHERE</p>//https://knockoutjs.com/documentation/options-binding.html
+      <select name="where" data-bind="options: availableHotels,
+                                      optionsText: 'title',
+                                      value: 'id'">
         <option selected="selected" value="0">Anywhere</option>
-        <option value="1">Hotel1</option>
-        <option value="2">Hotel2</option>
       </select>
     </div>
     <div>
-      <p>CHECK-IN {checkIn}</p>
+      <p>CHECK-IN</p>
       <input type="text" name="checkIn" value="" data-bind="text: checkIn" placeholder="mm/dd/yyyy" />
     </div>
     <div>
-      <p>CHECKOUT {checkOut}</p>
+      <p>CHECKOUT</p>
       <input type="text" name="checkOut" value="" data-bind="text: checkOut" placeholder="mm/dd/yyyy" />
     </div>
     <div>
@@ -30,75 +30,40 @@
   </form>
 
   <div>
-    <p>Стоимость {nightsCount} в выбранном отеле стоит {totalPrice}</p>
-    <p>Today's message is: <span data-bind="text: totalPrice"></span></p>
+    <p>
+      Стоимость <span data-bind="text: nightsCount">{nightsCount}</span> в выбранном отеле стоит
+      <span data-bind="text: totalPrice">{totalPrice}</span>
+    </p>
   </div>
 
   <script type="text/javascript">
-    document.addEventListener("DOMContentLoaded", function (event) {
-      console.log('DOMContentLoaded');
+    Date.prototype.addDays = function (days) {
+      var date = new Date(this.valueOf());
+      date.setDate(date.getDate() + days);
+      return date;
+    }
 
-      var viewModel = {
-        where: 1,
-        checkIn: "02.03.2020",
-        checkOut: "02.03.2020",
-        nightsCount: 0,
-        totalPrice: 0,
+    let vm = {
+      checkIn: new Date(Date.now()),
+      checkOut: new Date(Date.now()).addDays(5),
+      nightsCount: 0,
+      totalPrice: 0.00,
+      destId: 0,
+      availableHotels: [{ id: 1, title: "Hotel1", price: 500.00 }, { id: 2, title: "Hotel2", price: 200.00 }],
 
-        calculateCost: function (e) {
-          console.log('calculateCost1');
-          return false;
+      calculateCost: function (e) {
+        let self = this;
+
+        const hotel = self.availableHotels.find(h => { return h.id === self.destId; });
+        if (hotel) {
+          self.nightsCount = Math.abs(self.checkOut - self.checkIn);
+          self.totalPrice = self.nightsCount * hotel.price;
         }
-      };
 
-      //
-      var dataBindElements = document.querySelectorAll('[data-bind]');
-      for (const element of dataBindElements) {
-
-        //validation
-        const bindAttr = element.getAttribute('data-bind');
-        if (!bindAttr) continue;
-        const bindParams = bindAttr.split(':');
-        if (bindParams.length < 2)
-          continue;
-
-        const viewModelProp = bindParams[1].trim();
-        if (!viewModel.hasOwnProperty(viewModelProp))
-          continue;
-
-        //binding
-        const elementEvent = mapBindingEvent(element, bindParams[0].trim());
-        if (elementEvent) {
-          new Binding({
-            bindingModel: viewModel,
-            property: viewModelProp
-          }).addEventBinding(element, elementEvent, (e) => viewModel.call(viewModelProp, e));
-
-        } else {
-          const elementAttribute = mapBindingAttribute(element, bindParams[0].trim());
-
-          new Binding({
-            bindingModel: viewModel,
-            property: viewModelProp
-          }).addBinding(element, elementAttribute, elementEvent);
-        }
+        e.preventDefault();
       }
-
-      function mapBindingAttribute(element, attribute) {
-        const supportTexts = ["input", "textarea"];
-        if (supportTexts.includes(element.name)) {
-          if (attribute === 'text') return 'value';
-        }
-        return attribute;
-      }
-
-      function mapBindingEvent(element, attribute) {
-        const supportEvents = ["keyup", "click"];
-        if (supportEvents.includes(attribute))
-          return attribute;
-        return undefined;
-      }
-    });
+    };
+    Binder.init(vm);
   </script>
 </body>
 </html>
