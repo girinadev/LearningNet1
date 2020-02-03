@@ -3,46 +3,107 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <meta charset="utf-8" />
-  <title></title>
-  <script type="text/javascript" src="https://knockoutjs.com/downloads/knockout-3.5.1.js"></script>
-
+  <title>Check in</title>
+  <script src="lib/bnd.js"></script>
 </head>
 <body>
-  <!--
-  https://habr.com/ru/post/231883/
-  https://tuhub.ru/posts/javascript-moduli-rukovodstvo-dlya-nachinayushhih
-  -->
   <form>
     <div>
-      <input type="text" name="checkin" value="" />
+      <p>WHERE</p>
+      <select name="where">
+        <option selected="selected" value="0">Anywhere</option>
+        <option value="1">Hotel1</option>
+        <option value="2">Hotel2</option>
+      </select>
     </div>
     <div>
-      <input type="text" name="checkout" value="" />
+      <p>CHECK-IN {checkIn}</p>
+      <input type="text" name="checkIn" value="" data-bind="text: checkIn" placeholder="mm/dd/yyyy" />
     </div>
     <div>
-      <input type="submit" value="Расчитать" data-bind="click: calculateCost"/>
+      <p>CHECKOUT {checkOut}</p>
+      <input type="text" name="checkOut" value="" data-bind="text: checkOut" placeholder="mm/dd/yyyy" />
+    </div>
+    <div>
+      <input type="submit" value="Calculate" data-bind="click: calculateCost" />
     </div>
   </form>
 
-  <div>Стоимость {nightsCount} в выбранном отеле стоит {totalPrice}</div>
-
-  Today's message is: <span data-bind="text: myMessage"></span>
+  <div>
+    <p>Стоимость {nightsCount} в выбранном отеле стоит {totalPrice}</p>
+    <p>Today's message is: <span data-bind="text: totalPrice"></span></p>
+  </div>
 
   <script type="text/javascript">
     document.addEventListener("DOMContentLoaded", function (event) {
       console.log('DOMContentLoaded');
 
       var viewModel = {
-        myMessage: ko.observable(), // Initially blank
+        where: 1,
+        checkIn: "02.03.2020",
+        checkOut: "02.03.2020",
+        nightsCount: 0,
+        totalPrice: 0,
 
-        calculateCost: function() {
-          console.log('calculateCost');
+        calculateCost: function (e) {
+          console.log('calculateCost1');
           return false;
         }
       };
 
-      viewModel.myMessage("Hello, world!"); // Text appears
+      //
+      var dataBindElements = document.querySelectorAll('[data-bind]');
+      for (const element of dataBindElements) {
+
+        //validation
+        const bindAttr = element.getAttribute('data-bind');
+        if (!bindAttr) continue;
+        const bindParams = bindAttr.split(':');
+        if (bindParams.length < 2)
+          continue;
+
+        const viewModelProp = bindParams[1].trim();
+        if (!viewModel.hasOwnProperty(viewModelProp))
+          continue;
+
+        //binding
+        const elementEvent = mapBindingEvent(element, bindParams[0].trim());
+        if (elementEvent) {
+          new Binding({
+            bindingModel: viewModel,
+            property: viewModelProp
+          }).addEventBinding(element, elementEvent, (e) => viewModel.call(viewModelProp, e));
+
+        } else {
+          const elementAttribute = mapBindingAttribute(element, bindParams[0].trim());
+
+          new Binding({
+            bindingModel: viewModel,
+            property: viewModelProp
+          }).addBinding(element, elementAttribute, elementEvent);
+        }
+      }
+
+      function mapBindingAttribute(element, attribute) {
+        const supportTexts = ["input", "textarea"];
+        if (supportTexts.includes(element.name)) {
+          if (attribute === 'text') return 'value';
+        }
+        return attribute;
+      }
+
+      function mapBindingEvent(element, attribute) {
+        const supportEvents = ["keyup", "click"];
+        if (supportEvents.includes(attribute))
+          return attribute;
+        return undefined;
+      }
     });
   </script>
 </body>
 </html>
+<!--
+https://habr.com/ru/post/231883/
+https://tuhub.ru/posts/javascript-moduli-rukovodstvo-dlya-nachinayushhih
+https://www.wintellect.com/data-binding-pure-javascript/
+-->

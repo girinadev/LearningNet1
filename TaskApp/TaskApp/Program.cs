@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Specialized;
 using System.Text;
 using TaskApp.TaskAbstraction;
 using TaskApp.TaskClasses;
@@ -20,7 +21,7 @@ namespace TaskApp
 
       //TaskStatic();
 
-      TaskStruct();
+      //TaskStruct();
 
       Console.ReadLine();
     }
