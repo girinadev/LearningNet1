@@ -3,72 +3,84 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <meta charset="utf-8" />
-  <title>Check in</title>
+  <title>Бронируйте</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
   <script src="lib/bnd.js"></script>
 </head>
 <body>
-  <form>
-    <div>
-      <p>WHERE</p>//https://knockoutjs.com/documentation/options-binding.html
-      <select name="where" data-bind="options: availableHotels,
-                                      optionsText: 'title',
-                                      value: 'id'">
-        <option selected="selected" value="0">Anywhere</option>
-      </select>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-6">
+        <form class="m-3">
+          <div class="form-group">
+            <p>Где</p>
+            <select name="where" data-bind="value: hotelId, options: availableHotels, optionsText: title, text: id" class="form-control">
+              <option selected="selected" value="0">Где угодно</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <p>Прибытие</p>
+            <input type="text" name="checkIn" value="" data-bind="text: checkIn" placeholder="mm/dd/yyyy" class="form-control" />
+          </div>
+          <div class="form-group">
+            <p>Выезд</p>
+            <input type="text" name="checkOut" value="" data-bind="text: checkOut" placeholder="mm/dd/yyyy" class="form-control" />
+          </div>
+          <div>
+            <input type="submit" value="Раситать" data-bind="click: calculateCost" class="btn btn-primary" />
+          </div>
+        </form>
+      </div>
     </div>
-    <div>
-      <p>CHECK-IN</p>
-      <input type="text" name="checkIn" value="" data-bind="text: checkIn" placeholder="mm/dd/yyyy" />
+    <div class="row">
+      <div class="col-6">
+        <p class="cost-info alert alert-primary mt-3" style="display: none;">
+          Стоимость <span data-bind="text: nightsCount"></span> в
+          "<span data-bind="text: hotelTitle"></span>" отеле стоит
+          <span data-bind="text: totalPrice"></span>
+        </p>
+      </div>
     </div>
-    <div>
-      <p>CHECKOUT</p>
-      <input type="text" name="checkOut" value="" data-bind="text: checkOut" placeholder="mm/dd/yyyy" />
-    </div>
-    <div>
-      <input type="submit" value="Calculate" data-bind="click: calculateCost" />
-    </div>
-  </form>
-
-  <div>
-    <p>
-      Стоимость <span data-bind="text: nightsCount">{nightsCount}</span> в выбранном отеле стоит
-      <span data-bind="text: totalPrice">{totalPrice}</span>
-    </p>
   </div>
 
   <script type="text/javascript">
-    Date.prototype.addDays = function (days) {
-      var date = new Date(this.valueOf());
-      date.setDate(date.getDate() + days);
-      return date;
-    }
-
     let vm = {
-      checkIn: new Date(Date.now()),
-      checkOut: new Date(Date.now()).addDays(5),
       nightsCount: 0,
       totalPrice: 0.00,
-      destId: 0,
-      availableHotels: [{ id: 1, title: "Hotel1", price: 500.00 }, { id: 2, title: "Hotel2", price: 200.00 }],
+      hotelId: 0,
+      hotelTitle: null,
+      checkIn: new Date(Date.now()).toStringWithFormat(),
+      checkOut: new Date(Date.now()).addDays(5).toStringWithFormat(),
+      availableHotels: [{ id: 1, title: "Hotel1", price: 500.00 }, { id: 2, title: "Hotel2", price: 200.00 }, { id: 2, title: "Hotel3", price: 800.00 }],
 
       calculateCost: function (e) {
         let self = this;
 
-        const hotel = self.availableHotels.find(h => { return h.id === self.destId; });
+        const hotel = self.availableHotels.find(h => { return h.id === Number(self.hotelId); });
         if (hotel) {
-          self.nightsCount = Math.abs(self.checkOut - self.checkIn);
+          const fromDate = self.checkOut.parseDateWithFormat();
+          const toDate = self.checkIn.parseDateWithFormat();
+          var myDate = new Date();
+          myDate.setTime(Math.abs(fromDate - toDate));
+          self.nightsCount = myDate.getDay();
+
           self.totalPrice = self.nightsCount * hotel.price;
+          self.hotelTitle = hotel.title;
+
+          document.querySelector('.cost-info').style.display = '';
+        } else {
+          self.nightsCount = 0;
+          self.totalPrice = 0.00;
+          self.hotelTitle = '';
+
+          document.querySelector('.cost-info').style.display = 'none';
         }
 
         e.preventDefault();
       }
     };
+
     Binder.init(vm);
   </script>
 </body>
 </html>
-<!--
-https://habr.com/ru/post/231883/
-https://tuhub.ru/posts/javascript-moduli-rukovodstvo-dlya-nachinayushhih
-https://www.wintellect.com/data-binding-pure-javascript/
--->
