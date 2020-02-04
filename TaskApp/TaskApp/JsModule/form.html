@@ -14,17 +14,17 @@
         <form class="m-3">
           <div class="form-group">
             <p>Где</p>
-            <select name="where" data-bind="value: hotelId, options: availableHotels, optionsText: title, text: id" class="form-control">
+            <select name="where" data-bind="value: hotelId, options: availableHotels, optionsText: title, text: id" class="form-control" required>
               <option selected="selected" value="0">Где угодно</option>
             </select>
           </div>
           <div class="form-group">
             <p>Прибытие</p>
-            <input type="text" name="checkIn" value="" data-bind="text: checkIn" placeholder="mm/dd/yyyy" class="form-control" />
+            <input type="text" name="checkIn" value="" data-bind="text: checkIn" placeholder="mm/dd/yyyy" class="form-control" required />
           </div>
           <div class="form-group">
             <p>Выезд</p>
-            <input type="text" name="checkOut" value="" data-bind="text: checkOut" placeholder="mm/dd/yyyy" class="form-control" />
+            <input type="text" name="checkOut" value="" data-bind="text: checkOut" placeholder="mm/dd/yyyy" class="form-control" required />
           </div>
           <div>
             <input type="submit" value="Раситать" data-bind="click: calculateCost" class="btn btn-primary" />
@@ -35,52 +35,64 @@
     <div class="row">
       <div class="col-6">
         <p class="cost-info alert alert-primary mt-3" style="display: none;">
-          Стоимость <span data-bind="text: nightsCount"></span> в
-          "<span data-bind="text: hotelTitle"></span>" отеле стоит
-          <span data-bind="text: totalPrice"></span>
+          Стоимость в отеле "<span data-bind="text: hotelTitle"></span>"
+          за <span data-bind="text: nightsCount"></span> дней прибывания
+          составляет <b data-bind="text: totalPrice"></b> <b data-bind="text: currency"></b>
         </p>
       </div>
     </div>
   </div>
 
   <script type="text/javascript">
+    //https://jsfiddle.net/girinadev2014/ap6tx5mL/
     let vm = {
       nightsCount: 0,
-      totalPrice: 0.00,
+      totalPrice: 0,
+      currency: null,
       hotelId: 0,
       hotelTitle: null,
       checkIn: new Date(Date.now()).toStringWithFormat(),
       checkOut: new Date(Date.now()).addDays(5).toStringWithFormat(),
-      availableHotels: [{ id: 1, title: "Hotel1", price: 500.00 }, { id: 2, title: "Hotel2", price: 200.00 }, { id: 2, title: "Hotel3", price: 800.00 }],
+      availableHotels: [
+        { id: 1, title: "Крещатик", price: 500.50, currency: 'UAH' },
+        { id: 2, title: "Premier Hotel Rus", price: 200.00, currency: 'USD' },
+        { id: 3, title: "CityApartments", price: 800.99, currency: 'EUR' }
+      ],
 
       calculateCost: function (e) {
         let self = this;
 
-        const hotel = self.availableHotels.find(h => { return h.id === Number(self.hotelId); });
-        if (hotel) {
-          const fromDate = self.checkOut.parseDateWithFormat();
-          const toDate = self.checkIn.parseDateWithFormat();
-          var myDate = new Date();
-          myDate.setTime(Math.abs(fromDate - toDate));
-          self.nightsCount = myDate.getDay();
+        if (self.checkIn.isValidDate() && self.checkOut.isValidDate()) {
+          const hotel = self.availableHotels.find(h => { return h.id === Number(self.hotelId); });
 
-          self.totalPrice = self.nightsCount * hotel.price;
-          self.hotelTitle = hotel.title;
+          let totalDays = 0;
+          try {
+            totalDays = self.checkOut.parseDateWithFormat() - self.checkIn.parseDateWithFormat();
+          } catch (e) { }
 
-          document.querySelector('.cost-info').style.display = '';
-        } else {
-          self.nightsCount = 0;
-          self.totalPrice = 0.00;
-          self.hotelTitle = '';
+          if (hotel && totalDays >= 1) {
+            self.nightsCount = Math.round(totalDays / (1000 * 60 * 60 * 24));
+            self.totalPrice = (Math.round(self.nightsCount * hotel.price * 100) / 100).toFixed(2);
+            self.currency = hotel.currency;
+            self.hotelTitle = hotel.title;
 
-          document.querySelector('.cost-info').style.display = 'none';
+            document.querySelector('.cost-info').style.display = '';
+            e.preventDefault();
+            return;
+          }
         }
 
+        self.nightsCount = 0;
+        self.totalPrice = 0;
+        self.hotelTitle = null;
+        self.currency = null;
+
+        document.querySelector('.cost-info').style.display = 'none';
         e.preventDefault();
       }
     };
 
-    Binder.init(vm);
+    Binder.applyBindings(vm);
   </script>
 </body>
 </html>

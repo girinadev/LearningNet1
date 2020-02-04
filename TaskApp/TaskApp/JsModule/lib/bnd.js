@@ -1,7 +1,7 @@
 ﻿class Binder {
   static bindingContexts = {};
 
-  static init(viewModel) {
+  static applyBindings(viewModel) {
     var dataBindElements = document.querySelectorAll('[data-bind]');
 
     for (const element of dataBindElements) {
@@ -94,65 +94,65 @@
 
       return attrDict;
     }
+
+    function Binding(b) {
+      let self = this;
+      this.elementBindings = [];
+      this.bindingModel = b.bindingModel;
+      this.value = b.bindingModel[b.property];
+
+      this.valueGetter = function () {
+        return self.value;
+      };
+
+      this.valueSetter = function (val) {
+        self.value = val;
+        for (let i = 0; i < self.elementBindings.length; i++) {
+          let binding = self.elementBindings[i];
+          binding.element[binding.attribute] = val;
+        }
+      };
+
+      this.addBinding = function (element, attribute, event) {
+        let binding = {
+          element: element,
+          attribute: attribute
+        };
+        if (event) {
+          element.addEventListener(event, function (event) {
+            self.valueSetter(element[attribute]);
+          });
+          binding.event = event;
+        }
+        this.elementBindings.push(binding);
+        element[attribute] = self.value;
+        return self;
+      };
+
+      this.addEventBinding = function (element, eventName, eventFunc) {
+        if (eventName && eventFunc) {
+          element.addEventListener(eventName, function (event) {
+            self.value.call(self.bindingModel, event);
+          });
+        }
+        return self;
+      };
+
+      Object.defineProperty(b.bindingModel, b.property, {
+        get: this.valueGetter,
+        set: this.valueSetter
+      });
+
+      b.bindingModel[b.property] = this.value;
+    }
   }
-}
-
-function Binding(b) {
-  let self = this;
-  this.elementBindings = [];
-  this.bindingModel = b.bindingModel;
-  this.value = b.bindingModel[b.property];
-
-  this.valueGetter = function () {
-    return self.value;
-  };
-
-  this.valueSetter = function (val) {
-    self.value = val;
-    for (let i = 0; i < self.elementBindings.length; i++) {
-      let binding = self.elementBindings[i];
-      binding.element[binding.attribute] = val;
-    }
-  };
-
-  this.addBinding = function (element, attribute, event) {
-    let binding = {
-      element: element,
-      attribute: attribute
-    };
-    if (event) {
-      element.addEventListener(event, function (event) {
-        self.valueSetter(element[attribute]);
-      });
-      binding.event = event;
-    }
-    this.elementBindings.push(binding);
-    element[attribute] = self.value;
-    return self;
-  };
-
-  this.addEventBinding = function (element, eventName, eventFunc) {
-    if (eventName && eventFunc) {
-      element.addEventListener(eventName, function (event) {
-        self.value.call(self.bindingModel, event);
-      });
-    }
-    return self;
-  };
-
-  Object.defineProperty(b.bindingModel, b.property, {
-    get: this.valueGetter,
-    set: this.valueSetter
-  });
-
-  b.bindingModel[b.property] = this.value;
 }
 
 Date.prototype.addDays = function (days) {
   const date = new Date(this.valueOf());
   date.setDate(date.getDate() + days);
   return date;
-}
+};
 
 Date.prototype.toStringWithFormat = function () {
   const date = new Date(this.valueOf());
@@ -161,21 +161,30 @@ Date.prototype.toStringWithFormat = function () {
     ((date.getDate() > 9) ? date.getDate() : ('0' + date.getDate())) +
     '/' +
     date.getFullYear();
-}
+};
+
+String.prototype.isValidDate = function () {
+  const dateString = this.valueOf();
+  
+  if (!/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(dateString))
+    return false;
+  
+  var parts = dateString.split("/");
+  var day = parseInt(parts[1], 10);
+  var month = parseInt(parts[0], 10);
+  var year = parseInt(parts[2], 10);
+  
+  if (year < 1000 || year > 3000 || month === 0 || month > 12)
+    return false;
+
+  var monthLength = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];  
+  if (year % 400 === 0 || (year % 100 !== 0 && year % 4 === 0))
+    monthLength[1] = 29;
+  
+  return day > 0 && day <= monthLength[month - 1];
+};
 
 String.prototype.parseDateWithFormat = function () {
-  const str = this.valueOf();
-
-  return Date.parse(str);
-}
-
-function parseDate(str) {
-  var mdy = str.split('/');
+  const mdy = this.valueOf().split('/');
   return new Date(mdy[2], mdy[0] - 1, mdy[1]);
-}
-
-function datediff(first, second) {
-  // Take the difference between the dates and divide by milliseconds per day.
-  // Round to nearest whole number to deal with DST.
-  return Math.round((second - first) / (1000 * 60 * 60 * 24));
-}
+};
