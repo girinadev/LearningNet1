@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Linq;
 using System.Text;
+using TaskApp.Delegates;
 using TaskApp.TaskAbstraction;
 using TaskApp.TaskClasses;
 using TaskApp.TaskInheritance;
@@ -22,6 +25,8 @@ namespace TaskApp
       //TaskStatic();
 
       //TaskStruct();
+
+      TaskDelegat();
 
       Console.ReadLine();
     }
@@ -336,6 +341,78 @@ namespace TaskApp
     private static void StruktTaker(MyStruct myStruct)
     {
       myStruct.change = "изменено";
+    }
+
+    delegate int RandomInt();
+
+    private static void TaskDelegat()
+    {
+      //1
+      Func<int, int, int, int> AverаgeSum = delegate (int a, int b, int c) { return a + b + c; };
+      Console.WriteLine(AverаgeSum(3, 4, 5));
+
+      //2
+      Func<decimal, decimal, decimal> Sum = (a, b) => a + b;
+      Func<decimal, decimal, decimal> Sub = (a, b) => a - b;
+      Func<decimal, decimal, decimal> Mul = (a, b) => a * b;
+      Func<decimal, decimal, decimal> Div = (a, b) => b != 0 ? a / b : 0;
+
+      decimal x = 0;
+      decimal y = 0;
+      string operation = null;
+      string inputStr;
+      do
+      {
+        Console.WriteLine("Please input expression:");
+        inputStr = Console.ReadLine();
+      } while (!ParseExpression(inputStr, ref x, ref y, ref operation));
+
+      decimal result = 0;
+      switch (operation)
+      {
+        case Operations.Sum: result = Sum(x, y); break;
+        case Operations.Sub: result = Sub(x, y); break;
+        case Operations.Mul: result = Mul(x, y); break;
+        case Operations.Div: result = Div(x, y); break;
+      }
+      Console.WriteLine($"{inputStr} = {result}");
+
+      //3
+      var random = new Random();
+      Func<IEnumerable<RandomInt>, long> Average = r => r.Sum(s => s.Invoke());
+      var avResult = Average(new List<RandomInt>
+      {
+        () => random.Next(10000),
+        () => random.Next(10000),
+        () => random.Next(10000)
+      });
+
+      Console.WriteLine($"Average: {avResult}");
+    }
+
+    private static bool ParseExpression(string inputStr, ref decimal x, ref decimal y, ref string operation)
+    {
+      var operations = new[] { Operations.Sum, Operations.Sub, Operations.Mul, Operations.Div };
+      foreach (var op in operations)
+      {
+        try
+        {
+          var operands = inputStr.Split(op);
+          if (operands.Length != 2) continue;
+
+          x = decimal.Parse(operands[0]);
+          y = decimal.Parse(operands[1]);
+          operation = op;
+
+          return true;
+        }
+        catch
+        {
+          // ignored
+        }
+      }
+
+      return false;
     }
   }
 }
