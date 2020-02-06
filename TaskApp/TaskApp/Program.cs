@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using TaskApp.Delegates;
+using TaskApp.Generics;
 using TaskApp.TaskAbstraction;
 using TaskApp.TaskClasses;
 using TaskApp.TaskInheritance;
@@ -26,7 +27,9 @@ namespace TaskApp
 
       //TaskStruct();
 
-      TaskDelegat();
+      //TaskDelegat();
+
+      TaskGenerics();
 
       Console.ReadLine();
     }
@@ -413,6 +416,31 @@ namespace TaskApp
       }
 
       return false;
+    }
+
+    private static void TaskGenerics()
+    {
+      //1
+      var sc = Factory<SomeClass>.FactoryMethod();
+      Console.WriteLine(sc.F1);
+
+      //2
+      var list = new MyList<SomeClass>();
+      list.Add(new SomeClass("1","2"));
+      list.Add(new SomeClass("3", "4"));
+      Console.WriteLine(list[1].ToString());
+      Console.WriteLine(list.Count);
+      foreach (var item in list)
+      {
+        Console.WriteLine(item.ToString());
+      }
+
+      //4
+      var arr = list.GetArray<SomeClass>();
+      foreach (var item in arr)
+      {
+        Console.WriteLine(item.ToString());
+      }
     }
   }
 }
