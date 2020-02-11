@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
@@ -426,18 +427,57 @@ namespace TaskApp
 
       //2
       var list = new MyList<SomeClass>();
-      list.Add(new SomeClass("1","2"));
-      list.Add(new SomeClass("3", "4"));
-      Console.WriteLine(list[1].ToString());
-      Console.WriteLine(list.Count);
+      list.Add(new SomeClass("1", "2"));
+      list.Add(new SomeClass("3", "4")); //add element
+      Console.WriteLine(list[1].ToString());//get by index
+      Console.WriteLine(list.Count); //get total count
       foreach (var item in list)
       {
         Console.WriteLine(item.ToString());
       }
 
+      //3
+      var myDictionary = new MyDictionary<string, int>();
+      myDictionary.Add("one", 1);
+      myDictionary.Add("two", 2);
+      var count = myDictionary.Count();
+      Console.WriteLine(myDictionary["two"]);
+      myDictionary["two"] = 2000;
+      foreach (var item in myDictionary)
+      {
+        Console.WriteLine($"{item.Key} =  {item.Value}");
+      }
+
       //4
       var arr = list.GetArray<SomeClass>();
       foreach (var item in arr)
+      {
+        Console.WriteLine(item.ToString());
+      }
+
+      //5
+      var carCollection = new CarCollection<Car>();
+      carCollection.AddCar(2019, "To");
+      for (var i = 0; i < carCollection.Count; i++)//count
+      {
+        Console.WriteLine(carCollection[i].ToString());//get by index
+      }
+
+      carCollection.ClearAllCars();
+      Console.WriteLine($"CarCollection count: {carCollection.Count}");
+
+      //6
+
+      //7
+      var arrayList = new MyArrayList();
+      arrayList.Add(1);
+      arrayList.Add(2);
+      arrayList.Add("string");
+      arrayList.Insert(1, 22);
+      var indexOf = arrayList.IndexOf(1);
+      arrayList.Remove(22);
+
+      foreach (var item in arrayList)
       {
         Console.WriteLine(item.ToString());
       }

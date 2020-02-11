@@ -19,13 +19,11 @@ namespace TaskApp.Generics
 
     public bool MoveNext()
     {
-      //Avoids going beyond the end of the collection.
       if (++currentIndex >= _collection.Length)
       {
         return false;
       }
 
-      // Set current box to next item in collection.
       current = _collection[currentIndex];
       return true;
     }
