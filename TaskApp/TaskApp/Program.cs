@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Specialized;
+using System.IO;
 using System.Linq;
 using System.Text;
 using TaskApp.Delegates;
@@ -9,6 +8,7 @@ using TaskApp.Generics;
 using TaskApp.TaskAbstraction;
 using TaskApp.TaskClasses;
 using TaskApp.TaskInheritance;
+using TaskApp.TaskPageSaver;
 using TaskApp.TaskStatic;
 using TaskApp.TaskStruct;
 
@@ -30,7 +30,9 @@ namespace TaskApp
 
       //TaskDelegat();
 
-      TaskGenerics();
+      //TaskGenerics();
+
+      TaskPageSaver();
 
       Console.ReadLine();
     }
@@ -480,6 +482,27 @@ namespace TaskApp
       foreach (var item in arrayList)
       {
         Console.WriteLine(item.ToString());
+      }
+    }
+
+    private static void TaskPageSaver()
+    {
+      var testDate = new[] {
+        "http://selin.in.ua/solvve/text.txt",
+        "http://selin.in.ua/solvve/html.html",
+        "http://info.cern.ch/hypertext/WWW/TheProject.html"
+      };
+
+      foreach (var item in testDate)
+      {
+        var uri = new Uri(item);
+
+        var content = PageSaver.GetResponseBody(uri.Host, uri.PathAndQuery);
+        var ext = Path.GetExtension(item);
+        var name = Path.GetFileName(item);
+
+        var path = Path.Combine("D:\\", $"output_{name}{ext}");
+        File.WriteAllText(path, content);
       }
     }
   }
