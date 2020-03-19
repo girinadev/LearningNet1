@@ -497,7 +497,7 @@ namespace TaskApp
       {
         var uri = new Uri(item);
 
-        var content = PageSaver.GetResponseBody(uri.Host, uri.PathAndQuery);
+        var content = PageLoader.GetContent(uri.Host, uri.PathAndQuery);
         var ext = Path.GetExtension(item);
         var name = Path.GetFileName(item);
 

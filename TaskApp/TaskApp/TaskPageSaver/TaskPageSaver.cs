@@ -4,15 +4,15 @@ using System.Text;
 
 namespace TaskApp.TaskPageSaver
 {
-  public static class PageSaver
+  public static class PageLoader
   {
     const string bodySpliter = "\r\n\r\n";
 
-    public static string GetResponseBody(string host, string path)
+    public static string GetContent(string host, string path)
     {
-      var message = $"GET {path} HTTP/1.1\n" +
-         $"Host: {host}\n" +        
-         "\n";
+      var message = $"GET {path} HTTP/1.1\r\n" +
+         $"Host: {host}\r\n" +
+         "\r\n";
       try
       {
         using (var client = new TcpClient(host, 80))
