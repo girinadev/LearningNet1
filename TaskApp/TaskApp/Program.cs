@@ -495,14 +495,7 @@ namespace TaskApp
 
       foreach (var item in testDate)
       {
-        var uri = new Uri(item);
-
-        var content = PageLoader.GetContent(uri.Host, uri.PathAndQuery);
-        var ext = Path.GetExtension(item);
-        var name = Path.GetFileName(item);
-
-        var path = Path.Combine("D:\\", $"output_{name}{ext}");
-        File.WriteAllText(path, content);
+        PageSaver.LoadAndSave(item);
       }
     }
   }
