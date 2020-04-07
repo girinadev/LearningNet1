@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
 using TaskApp.Delegates;
 using TaskApp.Generics;
 using TaskApp.TaskAbstraction;
+using TaskApp.TaskAsyncAwait;
 using TaskApp.TaskClasses;
 using TaskApp.TaskInheritance;
 using TaskApp.TaskPageSaver;
@@ -32,7 +34,9 @@ namespace TaskApp
 
       //TaskGenerics();
 
-      TaskPageSaver();
+      //TaskPageSaver();
+
+      TaskAsyncAwait();
 
       Console.ReadLine();
     }
@@ -497,6 +501,24 @@ namespace TaskApp
       {
         PageSaver.LoadAndSave(item);
       }
+    }
+
+    private static void TaskAsyncAwait()
+    {
+      Stopwatch sw = new Stopwatch();
+
+      //async
+      sw.Start();
+      var t = SearchHelper.SearchAsync(".net");
+      t.Wait();
+      sw.Stop();
+      Console.WriteLine("\nAsync search time: {0}\n", (sw.ElapsedMilliseconds / 100.0).ToString());
+
+      //sync
+      sw.Start();
+      SearchHelper.Search(".net");      
+      sw.Stop();
+      Console.WriteLine("\nSync search time: {0}\n", (sw.ElapsedMilliseconds / 100.0).ToString());
     }
   }
 }
