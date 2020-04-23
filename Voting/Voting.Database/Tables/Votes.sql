@@ -1,0 +1,11 @@
+﻿CREATE TABLE [dbo].[Votes]
+(
+	[Id] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY, 
+    [UserId] UNIQUEIDENTIFIER NOT NULL, 
+    [AnswerId] UNIQUEIDENTIFIER NOT NULL, 
+    [CreatedDate] DATETIME NOT NULL,
+    CONSTRAINT FK_Votes_Answers FOREIGN KEY ([AnswerId])
+    REFERENCES [dbo].[Answers] ([Id]) ON DELETE CASCADE,
+    CONSTRAINT FK_Users_Votes FOREIGN KEY ([UserId])
+    REFERENCES [dbo].[Users] ([Id])
+)
